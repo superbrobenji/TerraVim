@@ -251,7 +251,7 @@ then
     exit 1
 fi
 setup_grep() {
-    if  ! command_exists ggrep  ||  ! command_exists rg  || ! command_exists grep 
+    if ! command_exists grep 
     then
         echo "${FMT_BLUE}Installing Grep...${FMT_RESET}"
         wget http://ftp.gnu.org/gnu/grep/grep-3.1.tar.xz
@@ -380,10 +380,10 @@ setup_neovim() {
 }
 
 setup_kitty() {
-    if ! [ $TERM = "xterm-kitty" ]
+    if [ $WITHKITTY = 'yes' ]
     then
         echo "${FMT_BLUE}Installing kitty...${FMT_RESET}"
-        curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+        curl -L https://sw.kovidgoyal.net/kitty/installer.sh launch=n | sh /dev/stdin
         if [ $os = 'linux64' ]
         then
             ln -sf "$HOME/.local/kitty.app/bin/kitty" "$HOME/.local/kitty.app/bin/kitten" "$HOME/.local/bin/"
@@ -393,8 +393,6 @@ setup_kitty() {
             sed -i "s|Exec=kitty|Exec=/home/$USER/.local/kitty.app/bin/kitty|g" "$HOME/.local/share/applications/kitty*.desktop"
         fi
 
-    else
-        echo "${FMT_GREEN}kitty is already installed${FMT_RESET}"
     fi
 }
 
@@ -436,8 +434,8 @@ setup_dotfiles() {
   && git config fsck.zeroPaddedFilemode ignore \
   && git config fetch.fsck.zeroPaddedFilemode ignore \
   && git config receive.fsck.zeroPaddedFilemode ignore \
-  && git config oh-my-zsh.remote origin \
-  && git config oh-my-zsh.branch "$BRANCH" \
+  && git config TerraVim.remote origin \
+  && git config TerraVim.branch "$BRANCH" \
   && git remote add origin "$REMOTE" \
   && git fetch --depth=1 origin \
   && git checkout -b "$BRANCH" "origin/$BRANCH" || {
