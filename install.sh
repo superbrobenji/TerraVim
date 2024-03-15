@@ -358,7 +358,7 @@ setup_zsh() {
 }
 
 setup_oh_my_zsh() {
-    if [ -d "$HOME/.oh-my-zsh" ] 
+    if ! [ -d "$HOME/.oh-my-zsh" ] 
     then
         echo "${FMT_BLUE}Installing oh-my-zsh...${FMT_RESET}"
         sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)""" --unattended
@@ -469,7 +469,7 @@ setup_dotfiles() {
     #tmux config
     if [ -f ~/.tmux.conf ]
     then
-        cp tmux-setup/tmux.conf.tokyonight "$HOME/"
+        cp tmux-setup/tmux.tokyonight.conf "$HOME/"
         if ! [ -d "$HOME/.local/scripts" ]
         then
             mkdir -p "$HOME/.local/scripts"
