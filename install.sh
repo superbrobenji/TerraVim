@@ -531,3 +531,4 @@ main() {
     setup_dotfiles
     setup_success
 }
+main "$@"
