@@ -424,6 +424,10 @@ setup_dotfiles() {
     fmt_error "git is not installed"
     exit 1
   }
+  if [ -d "$NVIM" ]; then
+    fmt_error "Neovim config directory already exists: $NVIM"
+    exit 1
+  fi
 
   # Manual clone with git config options to support git < v1.7.2
   git init --quiet "$NVIM" && cd "$NVIM" \
