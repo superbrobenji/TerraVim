@@ -26,6 +26,8 @@ then
     echo "Installing neovim..."
     nvimlink="https://github.com/neovim/neovim/releases/latest/download/nvim-${os}.tar.gz"
     wget -c $nvimlink -O - | tar -xz
+else
+    echo "Neovim is already installed"
 fi
 
 # update and install package managers
@@ -43,6 +45,8 @@ then
     if ! command -v brew &> /dev/null
     then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    else
+        brew update
     fi
 fi
 
@@ -59,6 +63,8 @@ then
     then
         brew install grep
     fi
+else
+    echo "Grep is already installed"
 fi
 
 # install ripgrep
@@ -71,6 +77,8 @@ then
     then
         brew install ripgrep
     fi
+else
+    echo "ripgrep is already installed"
 fi
 
 # install fzf
@@ -78,6 +86,8 @@ if ! command -v fzf &> /dev/null
 then
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
     ~/.fzf/install
+else
+    echo "fzf is already installed"
 fi
 
 # install tmux
@@ -90,46 +100,68 @@ then
     then
         brew install tmux
     fi
+else
+    echo "tmux is already installed"
 fi
 
 # optional installs, ask for user input
 # install zsh
-echo "Do you want to install zsh? (Y/n)"
-read -r response
-if [ "$response" == "Y" ] || [ "$response" == "y" ] || [ "$response" == "" ]
+if ! command -v zsh &> /dev/null
 then
-    if [ $os == 'linux64' ]
+    echo "Do you want to install zsh? (Y/n)"
+    read -r response
+    if [ "$response" == "Y" ] || [ "$response" == "y" ] || [ "$response" == "" ]
     then
-        sudo apt-get install -y zsh
-    elif [ $os == 'macos' ]
-    then
-        brew install zsh
+        if [ $os == 'linux64' ]
+        then
+            sudo apt-get install -y zsh
+        elif [ $os == 'macos' ]
+        then
+            brew install zsh
+        fi
     fi
+else
+    echo "zsh is already installed"
 fi
 
 # install oh-my-zsh
-echo "Do you want to install oh-my-zsh? (Y/n)"
-read -r response
-if [ "$response" == "Y" ] || [ "$response" == "y" ] || [ "$response" == "" ]
+if [ -d ~/.oh-my-zsh ] 
 then
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    echo "Do you want to install oh-my-zsh? (Y/n)"
+    read -r response
+    if [ "$response" == "Y" ] || [ "$response" == "y" ] || [ "$response" == "" ]
+    then
+        sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    fi
+else
+    echo "oh-my-zsh is already installed"
 fi
 
 # install kitty terminal 
-echo "Do you want to install kitty terminal? (Y/n)"
-read -r response
-if [ "$response" == "Y" ] || [ "$response" == "y" ] || [ "$response" == "" ]
+if ! command -v kitty &> /dev/null
 then
-    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-    if [ $os == 'linux64' ]
+    echo "Do you want to install kitty terminal? (Y/n)"
+    read -r response
+    if [ "$response" == "Y" ] || [ "$response" == "y" ] || [ "$response" == "" ]
     then
-        ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
-        cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
-        cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
-        sed -i "s|Icon=kitty|Icon=/home/$USER/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop
-        sed -i "s|Exec=kitty|Exec=/home/$USER/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
+        curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+        if [ $os == 'linux64' ]
+        then
+            ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
+            cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+            cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
+            sed -i "s|Icon=kitty|Icon=/home/$USER/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop
+            sed -i "s|Exec=kitty|Exec=/home/$USER/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
+        fi
+        cp kitty-config/* ~/.config/kitty/
     fi
-    cp kitty-config/* ~/.config/kitty/
+else
+    echo "Do you want to install kitty terminal configuration? (Y/n)"
+    read -r response
+    if [ "$response" == "Y" ] || [ "$response" == "y" ] || [ "$response" == "" ]
+    then
+        cp kitty-config/* ~/.config/kitty/
+    fi
 fi
 
 # install fira code font
@@ -151,7 +183,12 @@ fi
 echo "Copying configuration files..."
 
 # copy tmux setup files into home directory
-cp tmux-setup/* ~/
+echo "Do you want to copy tmux configuration? (Y/n)"
+read -r response
+if [ "$response" == "Y" ] || [ "$response" == "y" ] || [ "$response" == "" ]
+then
+    cp tmux-setup/* ~/
+fi
 
 # copy neovim setup files into .config
 mkdir -p ~/.config/nvim
