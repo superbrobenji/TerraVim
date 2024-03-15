@@ -14,6 +14,8 @@ HOME="${HOME:-$(getent passwd $USER 2>/dev/null | cut -d: -f6)}"
 # macOS does not have getent, but this works even if $HOME is unset
 HOME="${HOME:-$(eval echo ~$USER)}"
 
+NVIM="${NVIM:-$HOME/.config/nvim}"
+
 # Default settings
 REPO=${REPO:-superbrobenji/TerraVim}
 REMOTE=${REMOTE:-https://github.com/${REPO}.git}
@@ -332,18 +334,6 @@ setup_tmux() {
     else
         echo "${FMT_GREEN}tmux is already installed${FMT_RESET}"
     fi
-    if [ -f ~/.tmux.conf ]
-    then
-        cp tmux-setup/tmux.conf.tokyonight "$HOME/"
-        if ! [ -d "$HOME/.local/scripts" ]
-        then
-            mkdir -p "$HOME/.local/scripts"
-        fi
-        cp tmux-setup/.local/scripts/* "$HOME/.local/scripts/"
-        echo "source-file ./.tmux.tokyonight.conf" >> "$HOME/.tmux.conf"
-    else 
-        cp tmux-setup/* "$HOME/"
-    fi
 }
 
 # find way to isntall without package manager
@@ -402,19 +392,6 @@ setup_kitty() {
             sed -i "s|Icon=kitty|Icon=/home/$USER/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" "$HOME/.local/share/applications/kitty*.desktop"
             sed -i "s|Exec=kitty|Exec=/home/$USER/.local/kitty.app/bin/kitty|g" "$HOME/.local/share/applications/kitty*.desktop"
         fi
-        cp kitty-config/* "$HOME/.config/kitty/"
-        if [ $REPLACEKITTYCONFIG = 'yes' ]
-        then
-            cp kitty-config/* "$HOME/.config/kitty/"
-        else 
-            if [ -f ~/.config/kitty/kitty.conf ]
-            then
-                cp kitty-config/tokyonight_storm.conf "$HOME/.config/kitty/"
-                echo "include tokyonight_storm.conf" >> "$HOME/.config/kitty/kitty.conf"
-            else
-                cp kitty-config/* "$HOME/.config/kitty/"
-            fi
-        fi
 
     else
         echo "${FMT_GREEN}kitty is already installed${FMT_RESET}"
@@ -439,13 +416,75 @@ setup_fira_code() {
 }
 
 setup_dotfiles() {
-    if ! [ -d "$HOME/.config/nvim" ]
+  umask g-w,o-w
+
+  echo "${FMT_BLUE}Cloning TerraVim...${FMT_RESET}"
+
+  command_exists git || {
+    fmt_error "git is not installed"
+    exit 1
+  }
+
+  # Manual clone with git config options to support git < v1.7.2
+  git init --quiet "$NVIM" && cd "$NVIM" \
+  && git config core.eol lf \
+  && git config core.autocrlf false \
+  && git config fsck.zeroPaddedFilemode ignore \
+  && git config fetch.fsck.zeroPaddedFilemode ignore \
+  && git config receive.fsck.zeroPaddedFilemode ignore \
+  && git config oh-my-zsh.remote origin \
+  && git config oh-my-zsh.branch "$BRANCH" \
+  && git remote add origin "$REMOTE" \
+  && git fetch --depth=1 origin \
+  && git checkout -b "$BRANCH" "origin/$BRANCH" || {
+    [ ! -d "$NVIM" ] || {
+      cd -
+      rm -rf "$NVIM" 2>/dev/null
+    }
+    fmt_error "git clone of TerraVim repo failed"
+    exit 1
+  }
+  # neovim config
+  cp neovim-setup/* "$NVIM/"
+  
+  # kitty config
+  cp kitty-config/* "$HOME/.config/kitty/"
+    if [ $REPLACEKITTYCONFIG = 'yes' ]
     then
-        mkdir -p "$HOME/.config/nvim"
+        cp kitty-config/* "$HOME/.config/kitty/"
+    else 
+        if [ -f ~/.config/kitty/kitty.conf ]
+        then
+            cp kitty-config/tokyonight_storm.conf "$HOME/.config/kitty/"
+            echo "include tokyonight_storm.conf" >> "$HOME/.config/kitty/kitty.conf"
+        else
+            cp kitty-config/* "$HOME/.config/kitty/"
+        fi
     fi
-    cp neovim-setup/* "$HOME/.config/nvim/"
-    git clone --depth 1 https://github.com/wbthomason/packer.nvim\
-        "$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim"
+
+    #tmux config
+    if [ -f ~/.tmux.conf ]
+    then
+        cp tmux-setup/tmux.conf.tokyonight "$HOME/"
+        if ! [ -d "$HOME/.local/scripts" ]
+        then
+            mkdir -p "$HOME/.local/scripts"
+        fi
+        cp tmux-setup/.local/scripts/* "$HOME/.local/scripts/"
+        echo "source-file ./.tmux.tokyonight.conf" >> "$HOME/.tmux.conf"
+    else 
+        cp tmux-setup/* "$HOME/"
+    fi
+
+  rm -rf tmux-setup
+  rm -rf kitty-config
+  rm -rf neovim-setup
+  git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+      "$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim"
+  # Exit installation directory
+  cd -
+
+  echo
 }
 
 # shellcheck disable=SC2183  # printf string has more %s than arguments ($FMT_RAINBOW expands to multiple arguments)

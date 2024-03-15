@@ -7,5 +7,3 @@ TerraVim is a Neovim dotfile setup created to get you up and running as quickly 
 ## Installation Steps
 - run sh -c "$(curl -fsSL https://raw.githubusercontent.com/superbrobenji/TerraVim/master/install.sh)"
 
-### TODO
-- update install script to pull files from repo instead of copying
