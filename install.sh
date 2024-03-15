@@ -251,7 +251,7 @@ then
     exit 1
 fi
 setup_grep() {
-    if  command_exists ggrep  ||  command_exists rg  || command_exists grep 
+    if  ! command_exists ggrep  ||  ! command_exists rg  || ! command_exists grep 
     then
         echo "${FMT_BLUE}Installing Grep...${FMT_RESET}"
         wget http://ftp.gnu.org/gnu/grep/grep-3.1.tar.xz
