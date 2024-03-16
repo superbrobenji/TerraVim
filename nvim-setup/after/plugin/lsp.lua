@@ -20,7 +20,8 @@ lsp.ensure_installed({
     'eslint',
     'jsonls',
     'lua_ls',
-    'grammarly',
+    -- add grammarly if you want spell and grammar checks on md files
+    --'grammarly',
     -- add gopls if you are going to dev with go, remember to install go first
     --'gopls',
     'rust_analyzer',
