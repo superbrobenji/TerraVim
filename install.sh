@@ -461,10 +461,6 @@ setup_dotfiles() {
 
   echo "${FMT_BLUE}Cloning TerraVim...${FMT_RESET}"
 
-  command_exists git || {
-    fmt_error "git is not installed"
-    exit 1
-  }
   if [ -d "$NVIM" ]; then
     fmt_error "Neovim config directory already exists: $NVIM"
     exit 1
