@@ -1,24 +1,6 @@
 -- enter vim file explorer
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
--- rest commands
-vim.keymap.set("n", "<leader>rp", "<Plug>RestNvim")
-vim.keymap.set("n", "<leader>rr", "<Plug>RestNvimLast")
-vim.keymap.set("n", "<leader>rh", "<Plug>RestNvimPreview")
-
--- comment and uncomment blocks of code using /
-vim.keymap.set("v", "<leader>/", ":s/^/\\/\\/<CR>")
-vim.keymap.set("v", "<leader>//", ":s/\\/\\//<CR>")
-vim.keymap.set("n", "<leader>/", ":s/^/\\/\\/<CR>")
-vim.keymap.set("n", "<leader>//", ":s/\\/\\//<CR>")
-
-
--- comment and uncomment blocks of code using -
-vim.keymap.set("v", "<leader>-", ":s/^/\\-\\-<Space><CR>")
-vim.keymap.set("v", "<leader>--", ":s/\\-\\-<Space>//<CR>")
-vim.keymap.set("n", "<leader>-", ":s/^/\\-\\-<Space><CR>")
-vim.keymap.set("n", "<leader>--", ":s/\\-\\-<Space>//<CR>")
-
 -- FloaTerm configuration
 vim.keymap.set('n', "<leader>ft", ":FloatermNew --name=myfloat --height=0.8 --width=0.7 --autoclose=5 <CR> ")
 vim.keymap.set('n', "t", ":FloatermToggle myfloat<CR>")
@@ -38,7 +20,7 @@ vim.keymap.set("n", "<leader>w", "<C-w>w")
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
---copy entire line 
+--copy entire line
 vim.keymap.set("n", "Y", "yg$")
 -- keep cursor at beginning of line when joining lines
 vim.keymap.set("n", "J", "mzJ`z")
@@ -61,13 +43,6 @@ vim.keymap.set("n", "<leader>Y", "\"+Y")
 vim.keymap.set("n", "<leader>d", "\"_d")
 vim.keymap.set("v", "<leader>d", "\"_d")
 
--- Dap commands
--- run debugger with args
-vim.keymap.set('n', '<leader>R', ":RunScriptWithArgs ")
--- build project
-vim.keymap.set('n', '<C-b>', ':lua vim.g.dotnet_build_project()<CR>', { noremap = true, silent = true })
-
-
 -- stay in normal and add new line
 vim.keymap.set("n", "<leader>o", "o<Esc>")
 vim.keymap.set("n", "<leader>O", "O<Esc>")
@@ -84,7 +59,7 @@ vim.keymap.set("n", "<leader>f", function()
     vim.lsp.buf.format()
 end)
 
--- jest 
+-- jest
 vim.keymap.set("n", "<leader>tf", function()
     require('nvim-jest').test_file()
 end)
