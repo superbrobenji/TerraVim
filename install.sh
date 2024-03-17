@@ -234,7 +234,6 @@ os='unknown'
 case $(uname | tr '[:upper:]' '[:lower:]') in
       linux*)
         os='linux64'
-        wget -c https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz -O - | tar -xz
         ;;
       darwin*)
         os='macos'
@@ -243,6 +242,19 @@ case $(uname | tr '[:upper:]' '[:lower:]') in
           os='win64'
         ;;
 esac
+
+check_dependencies() {
+    if ! command_exists git
+    then
+        echo "${FMT_RED}Git is not installed${FMT_RESET}"
+        exit 1
+    fi
+    if ! command_exists node
+    then
+        echo "${FMT_RED}Node is not installed${FMT_RESET}"
+        exit 1
+    fi
+}
 
 # block windows until proper support is added
 if [ $os = 'win64' ]
@@ -372,8 +384,39 @@ setup_neovim() {
     if ! command_exists nvim
     then
         echo "${FMT_BLUE}Installing neovim...${FMT_RESET}"
-        nvimlink="https://github.com/neovim/neovim/releases/latest/download/nvim-${os}.tar.gz"
-        wget -c $nvimlink -O - | tar -xz
+    if [ os = 'linux64' ]
+    then
+        if user_can_sudo; then
+            sudo -k apt-get install -y ninja-build gettext cmake unzip curl build-essential
+        else
+            apt-get install -y ninja-build gettext cmake unzip curl build-essential
+        fi
+    elif [ os = 'macos' ]
+    then
+            brew install ninja cmake gettext curl
+    fi
+	git clone https://github.com/neovim/neovim
+    cd neovim
+	git checkout stable
+	make CMAKE_BUILD_TYPE=RelWithDebInfo
+    if [ os = 'linux64' ]
+    then
+        if user_can_sudo; then
+            cd build && cpack -G DEB && sudo -k dpkg -i nvim-linux64.deb
+            sudo -k dpkg -i nvim-linux64.deb
+        else
+            cd build && cpack -G DEB && dpkg -i nvim-linux64.deb
+        fi
+    elif [ os = 'macos' ]
+    then
+        if user_can_sudo; then
+            sudo -k make install
+        else
+         make install
+        fi
+    fi
+    cd ../../
+    rm -rf ./neovim
     else
         echo "${FMT_GREEN}neovim is already installed${FMT_RESET}"
     fi
@@ -496,8 +539,8 @@ setup_success() {
   printf '%s   | |%s ___ %s_ __%s _ __%s __ %s\ \  / /%s _ %s_ __ ___%s\n'  $FMT_RAINBOW $FMT_RESET
   printf "%s   | |%s/ _ \%s '__%s| '__%s/ _' %s\ \/ / %s| |%s '_ ' _ \%s\n"      $FMT_RAINBOW $FMT_RESET
   printf '%s   | |%s  __/%s |  %s| | %s| (_| |%s\  /  %s| |%s | | | | |%s\n'    $FMT_RAINBOW $FMT_RESET
-  printf '%s   |_|%s\___|$s_|  %s|_|  %s\__,_|%s \/   %s|_|%s_| |_| |_|%s....is now installed!%s\n' $FMT_RAINBOW $FMT_GREEN $FMT_RESET
-  printf '\n'
+  printf '%s   |_|%s\___|%s_|  %s|_|  %s\__,_|%s \/   %s|_|%s_| |_| |_|%s\n' $FMT_RAINBOW $FMT_RESET
+  printf '%s    %s        %s           %s   %s       %s     %s       %s....is now installed!%s\n' $FMT_RAINBOW $FMT_GREEN $FMT_RESET
   printf '\n'
   printf '%s\n' $FMT_RESET
 }
@@ -517,6 +560,7 @@ main() {
     done
 
     setup_color
+    check_dependencies
     setup_grep
     setup_ripgrep
     setup_fzf

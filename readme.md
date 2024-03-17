@@ -2,7 +2,7 @@
 
 TerraVim is a Neovim dotfile setup created to get you up and running as quickly as possible with kitty terminal and tmux
 
-# NB!! IT IS NOT IN WORKING CONDITION YEAT AND IN PROGRESS
+# NB!! IT IS NOT IN WORKING CONDITION YET AND IN PROGRESS
 
 ## Installation Steps
 - run sh -c "$(curl -fsSL https://raw.githubusercontent.com/superbrobenji/TerraVim/main/install.sh)"
@@ -21,7 +21,7 @@ TerraVim is a Neovim dotfile setup created to get you up and running as quickly 
 - To update the list of LSPs you want to ensure are installed. Update the `ensure_installed` object in `nvim/after/plugin/lsp.lua`
 - To update the list of Treesitter parser languages you want to ensure are installed. Update the `ensure_installed` object in `nvim/after/plugin/treesitter.lua`
 
-### Adding a nvim plugin
+## Adding a nvim plugin
 - To add a neovim plugin, simply add the plugin to the packer file in `lua/terravim` and run `:so` followed by `PackerSync`.
 - Then add a new file to `after/plugin` with the plugin name and add all the config for the plugin here. and run `:so`.
 
@@ -34,7 +34,7 @@ All the config settings for vim exists in `lua/terravim/set.lua`.
 All the configs for the Kitty terminal exists in `~/.config/kitty`.
 
 The config for tmux is in a file called `.tmux.config` in your home directory.
-The tmux config settings for the terminal theme exists in '.tmux.tokyonight.conf`
+The tmux config settings for the terminal theme exists in `.tmux.tokyonight.conf`
 
 
 ## TODOs
