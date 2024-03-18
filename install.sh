@@ -403,12 +403,14 @@ setup_neovim() {
   && git config fetch.fsck.zeroPaddedFilemode ignore \
   && git config receive.fsck.zeroPaddedFilemode ignore \
   && git config TerraVim.remote origin \
-  && git config TerraVim.branch stable \
+  && git config TerraVim.branch master \
   && git remote add origin https://github.com/neovim/neovim\
   && git fetch --depth=1 origin \
-  && git checkout stable || {
+  && git checkout -b "master" "origin/master" || {
     [ ! -d "neovim" ] || {
       cd -
+      rm -rf "neovim" 2>/dev/null
+      cd ../
       rm -rf "neovim" 2>/dev/null
     }
     fmt_error "git clone of Neovim repo failed"
