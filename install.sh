@@ -395,9 +395,8 @@ setup_neovim() {
     then
             brew install ninja cmake gettext curl
     fi
-    // --------------------------------------------------------------------
     
-  git init --quiet "$HOME" && cd "$HOME" \
+  git init --quiet "$HOME/neovim" && cd "$HOME/neovim" \
   && git config core.eol lf \
   && git config core.autocrlf false \
   && git config fsck.zeroPaddedFilemode ignore \
@@ -415,10 +414,7 @@ setup_neovim() {
     fmt_error "git clone of Neovim repo failed"
     exit 1
   }
-    // -----------------------------------------------------------
-	git clone https://github.com/neovim/neovim
     cd neovim
-	git checkout stable
 	make CMAKE_BUILD_TYPE=RelWithDebInfo
     if [ os = 'linux64' ]
     then
