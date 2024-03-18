@@ -416,7 +416,6 @@ setup_neovim() {
     fmt_error "git clone of Neovim repo failed"
     exit 1
   }
-    cd neovim
 	make CMAKE_BUILD_TYPE=RelWithDebInfo
     if [ os = 'linux64' ]
     then
