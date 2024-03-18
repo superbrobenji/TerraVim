@@ -395,6 +395,7 @@ setup_neovim() {
     then
             brew install ninja cmake gettext curl
     fi
+    // --------------------------------------------------------------------
     
   git init --quiet "$HOME" && cd "$HOME" \
   && git config core.eol lf \
@@ -406,7 +407,7 @@ setup_neovim() {
   && git config TerraVim.branch stable \
   && git remote add origin https://github.com/neovim/neovim\
   && git fetch --depth=1 origin \
-  && git checkout -b "stable" "origin/stable" || {
+  && git checkout stable || {
     [ ! -d "neovim" ] || {
       cd -
       rm -rf "neovim" 2>/dev/null
@@ -414,6 +415,8 @@ setup_neovim() {
     fmt_error "git clone of Neovim repo failed"
     exit 1
   }
+    // -----------------------------------------------------------
+	git clone https://github.com/neovim/neovim
     cd neovim
 	git checkout stable
 	make CMAKE_BUILD_TYPE=RelWithDebInfo
